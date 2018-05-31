@@ -70,13 +70,22 @@ class MainScreen extends Component {
       // This line tells us what to do when we stop moving
       onPanResponderRelease: (evt, gestureState) => {
         if (gestureState.dx > 120) {
+          console.log("hello");
           Animated.spring(this.translateX, {
             toValue: SCREEN_WIDTH + 100
-          }).start();
+          }).start(() => {
+            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
+              this.translateX.setValue(0);
+            });
+          });
         } else if (gestureState.dx < -120) {
           Animated.spring(this.translateX, {
             toValue: -SCREEN_WIDTH - 100
-          }).start();
+          }).start(() => {
+            this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
+              this.translateX.setValue(0);
+            });
+          });
         } else {
           Animated.spring(this.translateX, {
             toValue: 0,
@@ -96,8 +105,9 @@ class MainScreen extends Component {
   renderItems = () => {
     const items = [];
     for (i = 0; i < NUM_ITEMS; i++) {
+      console.log(i);
       if (i < this.state.currentIndex) {
-        return null;
+        items.push(null);
       } else if (i === this.state.currentIndex) {
         items.push(
           <Animated.View
@@ -124,6 +134,7 @@ class MainScreen extends Component {
                 left: this.nextCardOffset
               }
             ]}
+            {...this.PanResponder.panHandlers}
           >
             <AnimatedView />
           </Animated.View>
@@ -134,6 +145,7 @@ class MainScreen extends Component {
   };
 
   render() {
+    console.log("rendering");
     return (
       <View style={styles.background}>
         <View style={[styles.inputContainer, styles.listContainer]}>
