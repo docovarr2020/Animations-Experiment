@@ -6,7 +6,8 @@ import {
   Dimensions,
   PanResponder,
   TouchableOpacity,
-  Animated
+  Animated,
+  Easing
 } from "react-native";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -33,6 +34,19 @@ class MainScreen extends Component {
   };
 
   position = new Animated.ValueXY();
+  translateX = new Animated.Value(0);
+
+  nextCardScale = this.translateX.interpolate({
+    inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+    outputRange: [1, 0.8, 1],
+    extrapolate: "clamp"
+  });
+
+  nextCardOffset = this.translateX.interpolate({
+    inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
+    outputRange: [0, 50, 0],
+    extrapolate: "clamp"
+  });
 
   componentWillMount() {
     this.PanResponder = PanResponder.create({
@@ -50,22 +64,22 @@ class MainScreen extends Component {
 
       // This line tells us what to do when we are moving
       onPanResponderMove: (evt, gestureState) => {
-        this.position.setValue({ x: gestureState.dx, y: gestureState.dy });
+        this.translateX.setValue(gestureState.dx);
       },
 
       // This line tells us what to do when we stop moving
       onPanResponderRelease: (evt, gestureState) => {
         if (gestureState.dx > 120) {
-          Animated.spring(this.position, {
-            toValue: { x: SCREEN_WIDTH + 100, y: gestureState.dy }
+          Animated.spring(this.translateX, {
+            toValue: SCREEN_WIDTH + 100
           }).start();
         } else if (gestureState.dx < -120) {
-          Animated.spring(this.position, {
-            toValue: { x: -SCREEN_WIDTH - 100, y: gestureState.dy }
+          Animated.spring(this.translateX, {
+            toValue: -SCREEN_WIDTH - 100
           }).start();
         } else {
-          Animated.spring(this.position, {
-            toValue: { x: 0, y: 0 },
+          Animated.spring(this.translateX, {
+            toValue: 0,
             friction: 4
           }).start();
         }
@@ -90,7 +104,7 @@ class MainScreen extends Component {
             key={i}
             style={[
               styles.inputContainer,
-              { transform: [...this.position.getTranslateTransform()] }
+              { transform: [{ translateX: this.translateX }] }
             ]}
             {...this.PanResponder.panHandlers}
           >
@@ -101,7 +115,15 @@ class MainScreen extends Component {
         items.push(
           <Animated.View
             key={i}
-            style={[styles.inputContainer, styles.nextCard]}
+            style={[
+              styles.inputContainer,
+              styles.nextCard,
+              {
+                transform: [{ scale: this.nextCardScale }],
+                top: this.nextCardOffset,
+                left: this.nextCardOffset
+              }
+            ]}
           >
             <AnimatedView />
           </Animated.View>

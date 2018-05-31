@@ -1,8 +1,8 @@
 {
-  "name": "Reusable-Components-Seminar",
+  "name": "AnimationExperiment",
   "version": "0.0.0",
   "description": "Examples of reusable and customizable components",
-  "author": null,
+  "author": "Diego Covarrubias",
   "private": true,
   "main": "./src/main.js",
   "devDependencies": {

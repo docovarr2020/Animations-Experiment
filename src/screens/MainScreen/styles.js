@@ -26,8 +26,6 @@ export default (styles = StyleSheet.create({
     backgroundColor: "rgb(252,242,232)"
   },
   nextCard: {
-    top: 20,
-    left: 20,
     backgroundColor: "red"
   },
   listContainer: {
